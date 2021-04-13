@@ -15,7 +15,7 @@ schedules:
 trigger: none
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
 - group: ${{ parameters.variable_group }}
@@ -33,10 +33,10 @@ jobs:
       targetType: filePath
       filePath: ./scripts/cleanup-managedimages.ps1
       arguments: -ClientId $(CLIENT_ID) `
-                        -ClientSecret $(CLIENT_SECRET) `
-                        -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                        -AgentsResourceGroup $(AZURE_AGENTS_RESOURCE_GROUP) `
-                        -VmssNameWindows $(VMSS_Windows2019) `
-                        -VmssNameUbuntu $(VMSS_Ubuntu2004) `
-                        -TenantId $(AZURE_TENANT)
+                  -ClientSecret $(CLIENT_SECRET) `
+                  -ResourceGroup $(AZURE_RESOURCE_GROUP) `
+                  -SubscriptionId $(AZURE_SUBSCRIPTION) `
+                  -AgentsResourceGroup $(AZURE_AGENTS_RESOURCE_GROUP) `
+                  -VmssNameWindows $(VMSS_Windows2019) `
+                  -VmssNameUbuntu $(VMSS_Ubuntu2004) `
+                  -TenantId $(AZURE_TENANT)
