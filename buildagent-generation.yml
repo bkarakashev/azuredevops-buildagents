@@ -2,7 +2,7 @@ parameters:
 - name: image_type
   displayName: Build Agent Image
   type: string
-  default: windows2019
+  default: ubuntu2004
   values:
   - windows2019
   - ubuntu2004
@@ -13,7 +13,7 @@ parameters:
 - name: agent_pool
   displayName: Agent Pool
   type: string
-  default: CI Windows2019
+  default: aks-agent
 
 trigger: none
 
@@ -53,7 +53,7 @@ jobs:
         Write-Host "##vso[task.setvariable variable=ImageType;isOutput=true;]$ImageType"
         Write-Host "##vso[task.setvariable variable=ResourcesNamePrefix;isOutput=true;]$ResourcesNamePrefix"
         Write-Host "##vso[task.setvariable variable=ImageReadmeName;isOutput=true;]$ImageReadmeName"
-   
+
   - task: PowerShell@2
     name: buildVm
     displayName: 'Build VM'
@@ -61,15 +61,15 @@ jobs:
       targetType: filePath
       filePath: ./scripts/build-image.ps1
       arguments: -ResourcesNamePrefix $(setVars.ResourcesNamePrefix) `
-                        -ClientId $(CLIENT_ID) `
-                        -ClientSecret $(CLIENT_SECRET) `
-                        -TemplatePath $(TemplatePath) `
-                        -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
-                        -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                        -TenantId $(AZURE_TENANT) `
-                        -Location $(AZURE_LOCATION) `
-                        -GitHubFeedToken $(GITHUB_TOKEN)
+                  -ClientId $(CLIENT_ID) `
+                  -ClientSecret $(CLIENT_SECRET) `
+                  -TemplatePath $(TemplatePath) `
+                  -ResourceGroup $(AZURE_RESOURCE_GROUP) `
+                  -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
+                  -SubscriptionId $(AZURE_SUBSCRIPTION) `
+                  -TenantId $(AZURE_TENANT) `
+                  -Location $(AZURE_LOCATION) `
+                  -GitHubFeedToken $(GITHUB_TOKEN)
     env:
       PACKER_LOG: 1
       PACKER_LOG_PATH: $(Build.ArtifactStagingDirectory)/packer-log.txt
@@ -97,12 +97,12 @@ jobs:
       targetType: filePath
       filePath: ./scripts/cleanup.ps1
       arguments: -ResourcesNamePrefix $(setVars.ResourcesNamePrefix) `
-                     -ClientId $(CLIENT_ID) `
-                     -ClientSecret $(CLIENT_SECRET) `
-                     -Image $(setVars.ImageType) `
-                     -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                     -TenantId $(AZURE_TENANT) `
-                     -StorageAccount $(AZURE_STORAGE_ACCOUNT)
+                  -ClientId $(CLIENT_ID) `
+                  -ClientSecret $(CLIENT_SECRET) `
+                  -Image $(setVars.ImageType) `
+                  -SubscriptionId $(AZURE_SUBSCRIPTION) `
+                  -TenantId $(AZURE_TENANT) `
+                  -StorageAccount $(AZURE_STORAGE_ACCOUNT)
 
 - job: managedimagegeneration
   displayName: Managed Image Generation (${{ parameters.image_type }})
@@ -127,16 +127,16 @@ jobs:
       targetType: filePath
       filePath: ./scripts/create-managedimage.ps1
       arguments: -ResourcesNamePrefix $(ResourcesNamePrefix) `
-                        -ClientId $(CLIENT_ID) `
-                        -ClientSecret $(CLIENT_SECRET) `
-                        -ResourceGroup $(AZURE_RESOURCE_GROUP) `
-                        -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
-                        -SubscriptionId $(AZURE_SUBSCRIPTION) `
-                        -TenantId $(AZURE_TENANT) `
-                        -Location $(AZURE_LOCATION) `
-                        -ImageType $(ImageType) `
-                        -OsVhdUri $(OSDiskUri) `
-                        -OsType $(OsType)
+                  -ClientId $(CLIENT_ID) `
+                  -ClientSecret $(CLIENT_SECRET) `
+                  -ResourceGroup $(AZURE_RESOURCE_GROUP) `
+                  -StorageAccount $(AZURE_STORAGE_ACCOUNT) `
+                  -SubscriptionId $(AZURE_SUBSCRIPTION) `
+                  -TenantId $(AZURE_TENANT) `
+                  -Location $(AZURE_LOCATION) `
+                  -ImageType $(ImageType) `
+                  -OsVhdUri $(OSDiskUri) `
+                  -OsType $(OsType)
 
 - job: updatevmss
   displayName: Update Virtual Machine Scale Set (${{ parameters.image_type }})
@@ -160,8 +160,8 @@ jobs:
       targetType: filePath
       filePath: ./scripts/update-vmss.ps1
       arguments: -ClientId $(CLIENT_ID) `
-                        -ClientSecret $(CLIENT_SECRET) `
-                        -ResourceGroup $(AZURE_AGENTS_RESOURCE_GROUP) `
-                        -TenantId $(AZURE_TENANT) `
-                        -VmssName $(VmssName) `
-                        -ManagedImageId $(ManagedImageId)
+                  -ClientSecret $(CLIENT_SECRET) `
+                  -ResourceGroup $(AZURE_AGENTS_RESOURCE_GROUP) `
+                  -TenantId $(AZURE_TENANT) `
+                  -VmssName $(VmssName) `
+                  -ManagedImageId $(ManagedImageId)
